@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { RoleEnum } from '../../common/constants/enum';
+import { RoleEnum } from '@common/constants/role-enum';
 import { GameEntity } from './game.entity';
 
 @Entity('user')
@@ -33,6 +33,6 @@ export class UserEntity {
   })
   role: RoleEnum;
 
-  @OneToMany(() => GameEntity, (game) => game.user)
+  @OneToMany(() => GameEntity, (game) => game.owner)
   games: GameEntity[];
 }

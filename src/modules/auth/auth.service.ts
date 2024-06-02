@@ -1,5 +1,4 @@
-import { UserDTO } from '@modules/auth/dtos/requests/user-dto';
-// import { hashPassword } from '@common/utils/password';
+import { UserDto } from '@modules/auth/dtos/requests/user-dto';
 import { plainToInstance } from 'class-transformer';
 import { userRepository } from '@modules/user/user.repository';
 import {
@@ -7,31 +6,13 @@ import {
   generateToken,
   hashPassword,
 } from '@common/utils/password';
-import { UserResponse } from '@modules/auth/dtos/responses/user-response';
 import { LoginRequest } from '@modules/auth/dtos/requests/login-request';
-
-// import { AppDataSource } from '@database/data-source';
-// import { UserEntity } from '@database/entities/user.entity';
+import { UserResponse } from '@modules/user/dtos/responses/user-response';
 
 export class AuthService {
-  // private authRepository: UserRepository;
+  constructor() {}
 
-  constructor() {
-    // AppDataSource.initialize()
-    //   .then(() => {
-    //     this.authRepository = AppDataSource.getRepository(UserEntity);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error connecting to the database', error);
-    //   });
-  }
-
-  // public index = async () => {
-  //   const users = await authRepository.find()
-  //   return users;
-  // }
-
-  public create = async (user: UserDTO) => {
+  public create = async (user: UserDto) => {
     const duplicateUserEmail = await userRepository.findOne({
       where: { email: user.email },
     });
@@ -60,7 +41,6 @@ export class AuthService {
       where: { userName: request.userName },
     });
 
-    console.log('existingUser', existingUser);
     if (!existingUser) {
       throw new Error('UserName or password is incorrect');
     }
@@ -79,7 +59,7 @@ export class AuthService {
     });
   };
 
-  // public update =  async(user: UserDTO, id: number) => {
+  // public update =  async(user: GetGamesRequest, id: number) => {
   //   const updatedUser = await authRepository.update(id, user);
   //   return updatedUser;
   // }

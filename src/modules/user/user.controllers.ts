@@ -1,90 +1,81 @@
-import { Request, Response } from 'express';
-import { UserDTO } from '@modules/auth/dtos/requests/user-dto';
+import { NextFunction, Request, Response } from 'express';
+import { UserDto } from '@modules/auth/dtos/requests/user-dto';
 import { plainToInstance } from 'class-transformer';
 import { UserService } from '@modules/user/user.service';
+import { validate, ValidationError } from 'class-validator';
+import { BadRequestException } from '@common/errors/custom-error';
+import { RequestWithCurrentUser } from '@common/constants/request-with-current-user';
 
 export class UserController {
   constructor(private userService: UserService) {}
-  public async signup(req: Request, res: Response) {
-    const userDto: UserDTO = plainToInstance(UserDTO, req.body);
-
-    const userResponse = await this.userService.create(userDto);
-
-    return res
-      .status(200)
-      .json({ message: 'User created successfully', userResponse });
-  }
-
-  public async updateUser(req: Request, res: Response) {
+  public async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const idNumber = parseInt(id, 10);
-      const updateUser: UserDTO = plainToInstance(UserDTO, req.body);
+      const idNumber = Number(id);
+      const updateUser: UserDto = plainToInstance(UserDto, req.body);
 
+      const validateErrors = await validate(updateUser);
+      if (validateErrors?.length) {
+        const errorMessages: string[] = [];
+        validateErrors.forEach((error: ValidationError) => {
+          if (error.constraints) {
+            const errors = Object.values(error.constraints);
+            errorMessages.push(errors.join('; '));
+          }
+        });
+        throw new BadRequestException(errorMessages.join('; '));
+      }
       await this.userService.updateUser(idNumber, updateUser);
 
       return res.status(200).json({ message: 'User updated successfully' });
-    } catch (error: any) {
-      console.error(error);
-      return res.status(500).json({
-        message: 'An error occurred while updating the user',
-        error: error?.message,
-      });
+    } catch (error) {
+      next(error);
     }
   }
 
-  public async getProfile(req: any, res: Response) {
+  public async getUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.currentUser;
-      const idNumber = parseInt(id, 10);
+      const { page, limit } = req.query;
+      const users = await this.userService.getUsers({
+        limit: Number(limit),
+        page: Number(page),
+      });
+
+      return res.status(200).json({ message: 'Get users successfully', users });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getProfile(
+    req: RequestWithCurrentUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const currentUser = req.currentUser;
+      const idNumber = Number(currentUser?.id);
 
       const user = await this.userService.getUser(idNumber);
 
       return res
         .status(200)
         .json({ message: 'Get user profile successfully', user });
-    } catch (error: any) {
-      console.error(error);
-      return res.status(500).json({
-        message: 'An error occurred while get the user',
-        error: error?.message,
-      });
+    } catch (error) {
+      next(error);
     }
   }
 
-  public async deleteUser(req: Request, res: Response) {
+  public async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const idNumber = parseInt(id, 10);
+      const idNumber = Number(id);
 
       await this.userService.deleteUser(idNumber);
 
       return res.status(200).json({ message: 'User deleted successfully' });
-    } catch (error: any) {
-      console.error(error);
-      return res.status(500).json({
-        message: 'An error occurred while deleting the user',
-        error: error?.message,
-      });
+    } catch (error) {
+      next(error);
     }
   }
-
-  // static async getUsers(req: Request, res: Response) {
-  //   const data = cache.get("data");
-  //   if (data) {
-  //     console.log("serving from cache");
-  //     return res.status(200).json({
-  //       data,
-  //     });
-  //   } else {
-  //     console.log("serving from db");
-  //     const authRepository = AppDataSource.getRepository(UserEntity);
-  //     const users = await authRepository.find();
-  //
-  //     cache.put("data", users, 6000);
-  //     return res.status(200).json({
-  //       data: users,
-  //     });
-  //   }
-  // }
 }

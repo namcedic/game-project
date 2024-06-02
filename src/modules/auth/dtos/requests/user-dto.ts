@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { RoleEnum } from '@common/constants/enum';
+import { RoleEnum } from '@common/constants/role-enum';
 import { GameEntity } from '@database/entities/game.entity';
 import {
   IsEmail,
@@ -9,7 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class UserDTO {
+export class UserDto {
   @IsNotEmpty()
   @IsString()
   @Expose()

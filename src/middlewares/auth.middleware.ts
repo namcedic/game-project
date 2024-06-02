@@ -21,7 +21,8 @@ export const authentication = (
   if (!decode) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   req['currentUser'] = decode;
   next();
 };

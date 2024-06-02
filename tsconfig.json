@@ -16,7 +16,8 @@
       "@common/*": ["./src/common/*"],
       "@database/*": ["./src/database/*"],
       "@configs/*": ["./src/configs/*"],
-      "@modules/*": ["./src/modules/*"]
+      "@modules/*": ["./src/modules/*"],
+      "@middlewares/*": ["./src/middlewares/*"]
     }
   },
   "lib": ["es2015"],

@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { RoleEnum } from '@common/constants/enum';
+import { RoleEnum } from '@common/constants/role-enum';
 import { GameEntity } from '@database/entities/game.entity';
 import { IsEmail, IsEnum, IsNotEmpty, IsString, Min } from 'class-validator';
 
