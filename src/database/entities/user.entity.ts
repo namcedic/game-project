@@ -1,38 +1,38 @@
-import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm"
-import {RoleEnum} from "../../common/constants/enum";
-import {Game} from "./game.entity";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { RoleEnum } from '../../common/constants/enum';
+import { GameEntity } from './game.entity';
 
-@Entity()
-export class User {
-    @PrimaryGeneratedColumn('increment')
-    readonly id: number
+@Entity('user')
+export class UserEntity {
+  @PrimaryGeneratedColumn('increment')
+  readonly id: number;
 
-    @Column( { name: 'user_name', unique: true, length: 50, nullable: false })
-    userName: string
+  @Column({ name: 'user_name', unique: true, length: 50, nullable: false })
+  userName: string;
 
-    @Column({name: 'first_name', length: 50, nullable: false})
-    firstName: string
+  @Column({ name: 'first_name', length: 50, nullable: false })
+  firstName: string;
 
-    @Column({name: 'last_name', length: 50, nullable: false})
-    lastName: string
+  @Column({ name: 'last_name', length: 50, nullable: false })
+  lastName: string;
 
-    @Column({name: 'email', unique: true, nullable: false})
-    email: string
+  @Column({ name: 'email', unique: true, nullable: false })
+  email: string;
 
-    @Column({name: 'password', nullable: false})
-    password: string
+  @Column({ name: 'password', nullable: false })
+  password: string;
 
-    @Column({name: 'is_active', default: true})
-    isActive: boolean
+  @Column({ name: 'is_deleted', default: false })
+  isDeleted: boolean;
 
-    @Column({
-        name: 'role',
-        type: 'enum',
-        enum: RoleEnum,
-        nullable: false,
-    })
-    role: RoleEnum;
+  @Column({
+    name: 'role',
+    type: 'enum',
+    enum: RoleEnum,
+    nullable: false,
+  })
+  role: RoleEnum;
 
-    @OneToMany(() => Game, game => game.user)
-    games: Game[];
+  @OneToMany(() => GameEntity, (game) => game.user)
+  games: GameEntity[];
 }

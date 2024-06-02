@@ -1,24 +1,30 @@
 import express from 'express';
-import {AppDataSource} from "./database/data-source";
+// import {errorHandler} from "./middlewares/error-handler";
+import * as dotenv from "dotenv";
+import { Request, Response } from "express";
+import "reflect-metadata";
+import {userRouter} from "./routes/user.routes";
+import { AppDataSource } from './database/data-source';
+import { authRouter } from './routes/auth.routes';
+dotenv.config();
 
-// const app = express();
-// const port = 3000;
-//
-// app.get('/', (req, res) => {
-//     res.send('Hello World!');
-// });
-//
-// app.listen(port, () => {
-//     return console.log(`Express is listening at http://localhost:${port}`);
-// });
+const app = express();
+app.use(express.json());
+const { PORT = 3000 } = process.env;
+// app.use(errorHandler);
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
+// app.use("/api", gameRouter);
 
+app.get("*", (req: Request, res: Response) => {
+    res.status(505).json({ message: "Bad Request" });
+});
 
-
-AppDataSource.initialize().then(() => {
-    const app = express();
-    app.use(express.json())
-    app.get('/', (req, res) => {
-        return res.json('Established connection!');
+AppDataSource.initialize()
+    .then(async () => {
+        app.listen(PORT, () => {
+            console.log("Server is running on http://localhost:" + PORT);
+        });
+        console.log("Data Source has been initialized!");
     })
-    return app.listen(process.env.PORT);
-})
+    .catch((error) => console.log(error));

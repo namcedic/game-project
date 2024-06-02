@@ -1,8 +1,8 @@
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn} from 'typeorm';
-import {User} from "./user.entity";
+import {UserEntity} from "./user.entity";
 
-@Entity()
-export class Game {
+@Entity('game')
+export class GameEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
@@ -15,7 +15,7 @@ export class Game {
     @Column({name: 'release_date', nullable: false})
     releaseDate: Date;
 
-    @ManyToOne(type => User, user => user.games)
+    @ManyToOne(() => UserEntity, user => user.games)
     @JoinColumn({ name: 'user_id' })
-    user: User;
+    user: UserEntity;
 }

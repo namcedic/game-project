@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
 import {DataSource, DeepPartial} from 'typeorm';
-import {Seeder, SeederFactoryManager} from 'typeorm-extension';
+import {Seeder} from 'typeorm-extension';
 import {hashPassword} from "../../common/utils/password";
-import {User} from "../entities/user.entity";
+import {UserEntity} from "../entities/user.entity";
 import {RoleEnum} from "../../common/constants/enum";
-import {Game} from "../entities/game.entity";
+import {GameEntity} from "../entities/game.entity";
 
 export default class DbSeeder implements Seeder {
   public async run(
     ds: DataSource,
-    factoryManager: SeederFactoryManager,
+    // factoryManager: SeederFactoryManager,
   ): Promise<any> {
     console.log('Database seeder 👊');
 
@@ -17,7 +17,7 @@ export default class DbSeeder implements Seeder {
     await ds.manager.transaction(async (transactionalEntityManager) => {
       const adminPass = await hashPassword('Admin@123');
       const userPass = await hashPassword('user@123');
-      await transactionalEntityManager.save(User, [{
+      await transactionalEntityManager.save(UserEntity, [{
         email: 'admin@yopmai.com',
         password:adminPass,
         firstName: 'Admin',
@@ -36,7 +36,7 @@ export default class DbSeeder implements Seeder {
 
     console.log('👊Create games');
     await ds.manager.transaction(async (transactionalEntityManager) => {
-      const games: DeepPartial<Game>[] = [
+      const games: DeepPartial<GameEntity>[] = [
         {
           title: 'Valorant',
           genre: 'Shooter',
@@ -51,7 +51,7 @@ export default class DbSeeder implements Seeder {
         },
       ];
       await transactionalEntityManager.insert(
-        Game,
+        GameEntity,
           games,
       );
     });
